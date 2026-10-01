@@ -1,0 +1,3509 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <!-- =========================================================
+         ----- IMPORTANT POUR TÉLÉPHONE -----
+    ========================================================== -->
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Mon budget de la semaine</title>
+
+
+    <style>
+
+        /* =========================================================
+           ----- COULEURS À MODIFIER SI BESOIN -----
+
+           Tu peux modifier les couleurs ici sans toucher
+           au reste du code.
+        ========================================================== */
+
+        /* =========================================================
+           ----- COULEURS NOIR & BLANC -----
+           ----- À MODIFIER SI BESOIN -----
+        ========================================================== */
+
+        :root {
+
+            /* ----- Couleur principale ----- */
+            --couleur-principale: #168a5b;
+
+            /* ----- Couleur principale au survol ----- */
+            --couleur-principale-hover: #0f6f49;
+
+            /* ----- Fond général ----- */
+            --fond-page: #f5f5f5;
+
+            /* ----- Fond des cartes ----- */
+            --fond-carte: #ffffff;
+
+            /* ----- Fond secondaire ----- */
+            --fond-secondaire: #eeeeee;
+
+            /* ----- Texte principal ----- */
+            --texte-principal: #000000;
+
+            /* ----- Texte secondaire ----- */
+            --texte-secondaire: #555555;
+
+            /* ----- Bordures ----- */
+            --bordure: #d0d0d0;
+
+            /* ----- Fond des barres ----- */
+            --barre-fond: #dddddd;
+
+            /* ----- Couleur erreur ----- */
+            --danger: #000000;
+
+            /* ----- Couleur erreur au survol ----- */
+            --danger-hover: #333333;
+
+            /* ----- Ombre ----- */
+            --ombre:
+                0 3px 12px rgba(0, 0, 0, 0.08);
+        }
+
+
+        /* =========================================================
+           ----- MODE SOMBRE -----
+        ========================================================== */
+
+        body.dark {
+
+            /* ----- Fond général ----- */
+            --fond-page: #0a0a0a;
+
+            /* ----- Fond des cartes ----- */
+            --fond-carte: #181818;
+
+            /* ----- Fond secondaire ----- */
+            --fond-secondaire: #2b2b2b;
+
+            /* ----- Texte principal ----- */
+            --texte-principal: #ffffff;
+
+            /* ----- Texte secondaire ----- */
+            --texte-secondaire: #e0e0e0;
+
+            /* ----- Bordures ----- */
+            --bordure: #555555;
+
+            /* ----- Fond des barres ----- */
+            --barre-fond: #444444;
+
+            /* ----- Couleur principale mode nuit ----- */
+            --couleur-principale: #35b879;
+
+            /* ----- Couleur principale au survol ----- */
+            --couleur-principale-hover: #52cf91;
+
+            /* ----- Ombre ----- */
+            --ombre:
+                0 3px 15px rgba(0, 0, 0, 0.5);
+        }
+
+
+
+        /* =========================================================
+           ----- BASE -----
+        ========================================================== */
+
+        * {
+
+            box-sizing: border-box;
+
+        }
+
+
+        html {
+
+            width: 100%;
+
+            overflow-x: hidden;
+
+        }
+
+
+        body {
+
+            margin: 0;
+
+            width: 100%;
+
+            min-height: 100vh;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background:
+                var(--fond-page);
+
+            color:
+                var(--texte-principal);
+
+            transition:
+                background 0.25s ease,
+                color 0.25s ease;
+
+            overflow-x: hidden;
+        }
+
+
+        button,
+        input {
+
+            font-family: inherit;
+
+        }
+
+
+        button {
+
+            cursor: pointer;
+
+        }
+
+
+        /* =========================================================
+           ----- CONTENEUR PRINCIPAL -----
+        ========================================================== */
+
+        .container {
+
+            width: 95%;
+
+            max-width: 850px;
+
+            margin:
+                30px auto;
+
+        }
+
+
+        /* =========================================================
+           ----- EN-TÊTE -----
+        ========================================================== */
+
+        .header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: flex-start;
+
+            gap: 20px;
+
+            margin-bottom: 18px;
+
+        }
+
+
+        .header h1 {
+
+            margin: 0;
+
+            font-size: 26px;
+
+        }
+
+
+        .header p {
+
+            margin:
+                5px 0 0;
+
+            color:
+                var(--texte-secondaire);
+
+            font-size: 14px;
+
+        }
+
+
+        /* =========================================================
+           ----- BOUTON MODE SOMBRE / CLAIR -----
+        ========================================================== */
+
+        .theme-button {
+
+            border:
+                1px solid var(--bordure);
+
+            background:
+                var(--fond-carte);
+
+            color:
+                var(--texte-principal);
+
+            border-radius:
+                8px;
+
+            width:
+                44px;
+
+            height:
+                44px;
+
+            font-size:
+                18px;
+
+            box-shadow:
+                var(--ombre);
+
+            flex-shrink:
+                0;
+
+        }
+
+
+        .theme-button:hover {
+
+            transform:
+                translateY(-1px);
+
+        }
+
+
+        /* =========================================================
+           ----- BLOC BUDGET -----
+        ========================================================== */
+
+        /* =========================================================
+           ----- BUDGET GLOBAL : UNE SEULE GRANDE CARTE -----
+        ========================================================== */
+
+        .summary {
+            background: var(--fond-carte);
+            border: 1px solid var(--bordure);
+            border-radius: 12px 12px 0 0;
+            box-shadow: var(--ombre);
+            padding: 14px;
+            margin-bottom: 0;
+            border-bottom: 0;
+        }
+
+        .summary-top {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        /* =========================================================
+           ----- BUDGET TOTAL / ARGENT DISPONIBLE -----
+           ----- SANS COULEUR DE FOND -----
+        ========================================================== */
+
+        .summary-box {
+            background: var(--fond-secondaire);
+            border: none;
+        }
+
+        body.dark .summary-box {
+            background: var(--fond-secondaire);
+            border: none;
+        }
+
+
+
+        .summary-label {
+
+            color:
+                var(--texte-secondaire);
+
+            font-size:
+                12px;
+
+            margin-bottom:
+                6px;
+
+        }
+
+
+        /* =========================================================
+           ----- MODIFICATION BUDGET TOTAL -----
+        ========================================================== */
+
+        .budget-edit {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                4px;
+
+            width:
+                100%;
+
+        }
+
+
+        #budgetInput {
+
+            width:
+                120px;
+
+            max-width:
+                100%;
+
+            padding:
+                3px;
+
+            border:
+                none;
+
+            background:
+                transparent;
+
+            color:
+                var(--texte-principal);
+
+            font-size:
+                24px;
+
+            font-weight:
+                bold;
+
+            outline:
+                none;
+
+        }
+
+
+        .budget-edit-euro {
+
+            font-size:
+                21px;
+
+            font-weight:
+                bold;
+
+        }
+
+
+        .budget-save {
+
+            border:
+                none;
+
+            background:
+                var(--couleur-principale);
+
+            color:
+                white;
+
+            padding:
+                8px 10px;
+
+            border-radius:
+                6px;
+
+            font-weight:
+                bold;
+
+            margin-left:
+                auto;
+
+            white-space:
+                nowrap;
+
+        }
+
+
+        .budget-save:hover {
+
+            background:
+                var(--couleur-principale-hover);
+
+        }
+
+
+        /* =========================================================
+           ----- RESTE DISPONIBLE -----
+        ========================================================== */
+
+        .restant-value {
+
+            font-size:
+                24px;
+
+            font-weight:
+                bold;
+
+        }
+
+
+        .restant-value.depasse {
+
+            color:
+                var(--danger);
+
+        }
+
+
+        /* =========================================================
+           ----- INFORMATIONS BUDGET -----
+        ========================================================== */
+
+        .total-info {
+
+            margin-top:
+                12px;
+
+            color:
+                var(--texte-secondaire);
+
+            font-size:
+                12px;
+
+        }
+
+
+        /* =========================================================
+           ----- BARRES DE PROGRESSION -----
+        ========================================================== */
+
+        .progress {
+
+            width:
+                100%;
+
+            height:
+                6px;
+
+            margin-top:
+                6px;
+
+            background:
+                var(--barre-fond);
+
+            border-radius:
+                20px;
+
+            overflow:
+                hidden;
+
+        }
+
+
+        .progress-bar {
+
+            height:
+                100%;
+
+            width:
+                0%;
+
+            background:
+                var(--couleur-principale);
+
+            transition:
+                width 0.3s ease;
+
+        }
+
+
+        .budget-warning {
+
+            color:
+                var(--danger);
+
+            font-size:
+                12px;
+
+            font-weight:
+                bold;
+
+            margin-top:
+                8px;
+
+        }
+
+
+        /* =========================================================
+           ----- CATÉGORIES -----
+        ========================================================== */
+
+        .categories {
+
+            background:
+                var(--fond-carte);
+
+            border:
+                1px solid var(--bordure);
+
+            border-radius:
+                0 0 12px 12px;
+
+            box-shadow:
+                var(--ombre);
+
+            padding:
+                8px 16px;
+
+            margin-top:
+                0;
+
+            border-top:
+                0;
+
+        }
+
+
+        .categories-title {
+
+            font-size:
+                15px;
+
+            font-weight:
+                bold;
+
+            padding:
+                7px 0 2px;
+
+        }
+
+
+        .category {
+
+            padding:
+                16px 0;
+
+            border-bottom:
+                1px solid var(--bordure);
+
+        }
+
+
+        .category:last-child {
+
+            border-bottom:
+                none;
+
+        }
+
+
+        /* =========================================================
+           ----- EN-TÊTE CATÉGORIE -----
+        ========================================================== */
+
+        .category-header {
+
+            display:
+                flex;
+
+            justify-content:
+                space-between;
+
+            align-items:
+                center;
+
+            gap:
+                15px;
+
+        }
+
+
+        .category-name {
+
+            font-size:
+                15px;
+
+            font-weight:
+                bold;
+
+            overflow:
+                hidden;
+
+            text-overflow:
+                ellipsis;
+
+        }
+
+
+        .category-amount {
+
+            font-size:
+                13px;
+
+            color:
+                var(--texte-secondaire);
+
+            white-space:
+                nowrap;
+
+        }
+
+
+        /* =========================================================
+           ----- BARRE CATÉGORIE -----
+        ========================================================== */
+
+        .category-progress {
+
+            margin-top:
+                7px;
+
+        }
+
+
+        /* =========================================================
+           ----- ACTIONS CATÉGORIE -----
+        ========================================================== */
+
+        .category-actions {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                6px;
+
+            flex-wrap:
+                wrap;
+
+            margin-top:
+                9px;
+
+        }
+
+
+        .category-rest {
+
+            color:
+                var(--texte-secondaire);
+
+            font-size:
+                12px;
+
+            margin-right:
+                2px;
+
+        }
+
+
+        /* =========================================================
+           ----- CHAMP MONTANT -----
+        ========================================================== */
+
+        .amount-input {
+
+            width:
+                100px;
+
+            height:
+                42px;
+
+            padding:
+                8px 11px;
+
+            border:
+                1px solid var(--bordure);
+
+            border-radius:
+                8px;
+
+            background:
+                var(--fond-carte);
+
+            color:
+                var(--texte-principal);
+
+            outline:
+                none;
+
+            font-size:
+                14px;
+
+        }
+
+
+        .amount-input:focus {
+
+            border-color:
+                var(--couleur-principale);
+
+        }
+
+
+        /* =========================================================
+           ----- BOUTON AJOUTER -----
+        ========================================================== */
+
+        .add-button {
+
+            height:
+                42px;
+
+            border:
+                none;
+
+            border-radius:
+                7px;
+
+            padding:
+                0 14px;
+
+            background:
+                var(--couleur-principale);
+
+            color:
+                white;
+
+            font-weight:
+                bold;
+
+        }
+
+
+        .add-button:hover {
+
+            background:
+                var(--couleur-principale-hover);
+
+        }
+/* =========================================================
+           ----- BOUTON MODIFIER -----
+        ========================================================== */
+
+        .edit-toggle {
+
+            display:
+                block;
+
+            margin-top:
+                9px;
+
+            padding:
+                0;
+
+            border:
+                none;
+
+            background:
+                transparent;
+
+            color:
+                var(--texte-secondaire);
+
+            font-size:
+                12px;
+
+            text-align:
+                left;
+
+        }
+
+
+        .edit-toggle:hover {
+
+            color:
+                var(--couleur-principale);
+
+        }
+
+
+        /* =========================================================
+           ----- ZONE MODIFICATION -----
+        ========================================================== */
+
+        .edit-area {
+
+            display:
+                none;
+
+            margin-top:
+                10px;
+
+        }
+
+
+        .edit-area.open {
+
+            display:
+                block;
+
+        }
+
+
+        .edit-row {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                1fr 100px auto auto;
+
+            gap:
+                8px;
+
+            align-items:
+                center;
+
+        }
+
+
+        .edit-input {
+
+            height:
+                44px;
+
+            width:
+                100%;
+
+            padding:
+                8px 11px;
+
+            border:
+                1px solid var(--bordure);
+
+            border-radius:
+                9px;
+
+            background:
+                var(--fond-carte);
+
+            color:
+                var(--texte-principal);
+
+            outline:
+                none;
+
+            font-size:
+                14px;
+
+        }
+
+
+        .edit-input:focus {
+
+            border-color:
+                var(--couleur-principale);
+
+        }
+
+
+        /* =========================================================
+           ----- ENREGISTRER CATÉGORIE -----
+        ========================================================== */
+
+        .save-category {
+
+            height:
+                44px;
+
+            border:
+                1px solid var(--bordure);
+
+            border-radius:
+                9px;
+
+            background:
+                var(--fond-carte);
+
+            color:
+                var(--texte-principal);
+
+            padding:
+                0 12px;
+
+            font-weight:
+                bold;
+
+        }
+
+
+        .save-category:hover {
+
+            background:
+                var(--couleur-principale);
+
+            color:
+                white;
+
+            border-color:
+                var(--couleur-principale);
+
+        }
+
+
+        /* =========================================================
+           ----- SUPPRIMER CATÉGORIE -----
+        ========================================================== */
+
+        .delete-category {
+
+            height:
+                44px;
+
+            border:
+                1px solid var(--bordure);
+
+            border-radius:
+                9px;
+
+            background:
+                var(--fond-carte);
+
+            color:
+                var(--danger);
+
+            padding:
+                0 12px;
+
+            font-weight:
+                bold;
+
+        }
+
+
+        .delete-category:hover {
+
+            background:
+                var(--danger);
+
+            color:
+                white;
+
+        }
+
+
+        /* =========================================================
+           ----- LISTE DES DÉPENSES -----
+        ========================================================== */
+
+        .expenses {
+
+            margin-top:
+                9px;
+
+        }
+
+
+        .expense {
+
+            display:
+                flex;
+
+            justify-content:
+                space-between;
+
+            align-items:
+                center;
+
+            background:
+                var(--fond-secondaire);
+
+            padding:
+                7px 9px;
+
+            border-radius:
+                7px;
+
+            margin-top:
+                5px;
+
+            font-size:
+                12px;
+
+        }
+
+
+        .expense-delete {
+
+            border:
+                none;
+
+            background:
+                transparent;
+
+            color:
+                var(--danger);
+
+            font-size:
+                18px;
+
+            cursor:
+                pointer;
+
+            width:
+                32px;
+
+            height:
+                32px;
+
+        }
+
+
+        /* =========================================================
+           ----- AVERTISSEMENT CATÉGORIE -----
+        ========================================================== */
+
+        .category-warning {
+
+            color:
+                var(--danger);
+
+            font-size:
+                12px;
+
+            font-weight:
+                bold;
+
+            margin-top:
+                6px;
+
+        }
+
+
+        /* =========================================================
+           ----- AJOUTER CATÉGORIE -----
+        ========================================================== */
+
+        .add-category-container {
+
+            padding:
+                15px 0 7px;
+
+        }
+
+
+        .new-category-button {
+
+            width:
+                100%;
+
+            height:
+                44px;
+
+            border:
+                1px dashed var(--bordure);
+
+            border-radius:
+                8px;
+
+            background:
+                transparent;
+
+            color:
+                var(--texte-secondaire);
+
+        }
+
+
+        .new-category-button:hover {
+
+            border-color:
+                var(--couleur-principale);
+
+            color:
+                var(--couleur-principale);
+
+        }
+
+
+        .new-category-row {
+
+            display:
+                none;
+
+            grid-template-columns:
+                1fr 100px auto;
+
+            gap:
+                8px;
+
+            margin-top:
+                10px;
+
+        }
+
+
+        .new-category-row.open {
+
+            display:
+                grid;
+
+        }
+
+
+        .create-category {
+
+            height:
+                42px;
+
+            border:
+                none;
+
+            border-radius:
+                8px;
+
+            background:
+                var(--couleur-principale);
+
+            color:
+                white;
+
+            padding:
+                0 14px;
+
+            font-weight:
+                bold;
+
+        }
+
+
+        /* =========================================================
+           ----- PETITS ÉCRANS -----
+        ========================================================== */
+
+        @media (max-width: 650px) {
+
+
+            .container {
+
+                width:
+                    100%;
+
+                max-width:
+                    none;
+
+                margin:
+                    0;
+
+                padding:
+                    15px 10px 30px;
+
+            }
+
+
+            /* ----- Header ----- */
+
+            .header {
+
+                align-items:
+                    center;
+
+                gap:
+                    10px;
+
+                margin-bottom:
+                    15px;
+
+            }
+
+
+            .header h1 {
+
+                font-size:
+                    21px;
+
+                line-height:
+                    1.2;
+
+            }
+
+
+            .header p {
+
+                font-size:
+                    12px;
+
+                line-height:
+                    1.4;
+
+            }
+
+
+            .theme-button {
+
+                width:
+                    44px;
+
+                height:
+                    44px;
+
+            }
+
+
+            /* ----- Budget ----- */
+
+            .summary {
+
+                padding:
+                    10px;
+
+                border-radius:
+                    10px 10px 0 0;
+
+                border-bottom:
+                    0;
+
+            }
+
+
+            .summary-top {
+
+                grid-template-columns:
+                    1fr;
+
+                gap:
+                    8px;
+
+            }
+
+
+            .summary-box {
+
+                width:
+                    100%;
+
+                padding:
+                    12px;
+
+            }
+
+
+            /* ----- Budget total ----- */
+
+            .budget-edit {
+
+                width:
+                    100%;
+
+            }
+
+
+            #budgetInput {
+
+                width:
+                    auto;
+
+                min-width:
+                    0;
+
+                flex:
+                    1;
+
+                font-size:
+                    22px;
+
+            }
+
+
+            .budget-edit-euro {
+
+                font-size:
+                    20px;
+
+            }
+
+
+            .budget-save {
+
+                min-height:
+                    40px;
+
+                padding:
+                    0 10px;
+
+                white-space:
+                    nowrap;
+
+            }
+
+
+            /* ----- Catégories ----- */
+
+            .categories {
+
+                width:
+                    100%;
+
+                padding:
+                    8px 12px;
+
+                border-radius:
+                    0 0 10px 10px;
+
+                margin-top:
+                    0;
+
+                border-top:
+                    0;
+
+            }
+
+
+            .categories-title {
+
+                font-size:
+                    15px;
+
+                padding:
+                    8px 0;
+
+            }
+
+
+            .category {
+
+                padding:
+                    17px 0;
+
+            }
+
+
+            /* ----- Header catégorie ----- */
+
+            .category-header {
+
+                width:
+                    100%;
+
+                gap:
+                    10px;
+
+            }
+
+
+            .category-name {
+
+                font-size:
+                    15px;
+
+            }
+
+
+            .category-amount {
+
+                flex-shrink:
+                    0;
+
+                font-size:
+                    12px;
+
+            }
+
+
+            /* ----- Actions ----- */
+
+            .category-actions {
+
+                display:
+                    grid;
+
+                grid-template-columns:
+                    1fr 1fr;
+
+                gap:
+                    7px;
+
+                width:
+                    100%;
+
+            }
+
+
+            .category-rest {
+
+                grid-column:
+                    1 / -1;
+
+                font-size:
+                    12px;
+
+            }
+
+
+            .amount-input {
+
+                grid-column:
+                    1 / -1;
+
+                width:
+                    100%;
+
+                height:
+                    44px;
+
+                font-size:
+                    16px;
+
+            }
+
+
+            .add-button {
+
+                width:
+                    100%;
+
+                height:
+                    44px;
+
+                font-size:
+                    14px;
+
+            }
+
+
+            .remove-button {
+
+                width:
+                    100%;
+
+                height:
+                    44px;
+
+                font-size:
+                    14px;
+
+            }
+
+
+            /* ----- Modification ----- */
+
+            .edit-toggle {
+
+                width:
+                    100%;
+
+                min-height:
+                    38px;
+
+                padding:
+                    5px 0;
+
+            }
+
+
+            .edit-row {
+
+                display:
+                    grid;
+
+                grid-template-columns:
+                    1fr 1fr;
+
+                gap:
+                    7px;
+
+            }
+
+
+            .edit-name {
+
+                grid-column:
+                    1 / -1;
+
+            }
+
+
+            .edit-input {
+
+                height:
+                    44px;
+
+                font-size:
+                    16px;
+
+            }
+
+
+            .save-category {
+
+                width:
+                    100%;
+
+                height:
+                    44px;
+
+                font-size:
+                    13px;
+
+            }
+
+
+            .delete-category {
+
+                width:
+                    100%;
+
+                height:
+                    44px;
+
+                font-size:
+                    13px;
+
+            }
+
+
+            /* ----- Nouvelle catégorie ----- */
+
+            .new-category-row {
+
+                grid-template-columns:
+                    1fr 1fr;
+
+            }
+
+
+            .new-category-row input:first-child {
+
+                grid-column:
+                    1 / -1;
+
+            }
+
+
+            .create-category {
+
+                grid-column:
+                    1 / -1;
+
+                width:
+                    100%;
+
+                height:
+                    44px;
+
+            }
+
+        }
+
+
+        /* =========================================================
+           ----- TRÈS PETITS TÉLÉPHONES -----
+        ========================================================== */
+
+        @media (max-width: 380px) {
+
+
+            .container {
+
+                padding:
+                    12px 7px 25px;
+
+            }
+
+
+            .header h1 {
+
+                font-size:
+                    19px;
+
+            }
+
+
+            .header p {
+
+                font-size:
+                    11px;
+
+            }
+
+
+            .category-amount {
+
+                font-size:
+                    11px;
+
+            }
+
+
+            .edit-row {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .edit-name {
+
+                grid-column:
+                    auto;
+
+            }
+
+
+            .save-category,
+            .delete-category {
+
+                width:
+                    100%;
+
+            }
+
+        }
+
+    
+        /* =========================================================
+           ----- LISIBILITÉ MODE SOMBRE -----
+           ----- Texte blanc et contrasté -----
+        ========================================================== */
+
+        body.dark {
+            color: #ffffff;
+        }
+
+        body.dark .summary-label,
+        body.dark .summary-value,
+        body.dark .section-title,
+        body.dark .category-name,
+        body.dark .category-amount,
+        body.dark .remaining,
+        body.dark .hint,
+        body.dark label {
+            color: #ffffff;
+        }
+
+        body.dark input,
+        body.dark button,
+        body.dark select {
+            color: #ffffff;
+            background: #1f1f1f;
+            border-color: #555555;
+        }
+
+        body.dark input::placeholder {
+            color: #bdbdbd;
+            opacity: 1;
+        }
+
+        body.dark .summary-box {
+            background: #2b2b2b;
+        }
+
+        body.dark .progress {
+            background: #444444;
+        }
+
+        body.dark .progress-bar {
+            background: var(--couleur-principale);
+        }
+
+    
+        /* ----- Bouton AJOUTER : plus clair en mode nuit ----- */
+        body.dark .btn-add,
+        body.dark button.btn-add,
+        body.dark .add-btn,
+        body.dark .add-button {
+            background: var(--couleur-principale);
+            color: #ffffff;
+            border-color: var(--couleur-principale);
+        }
+
+        body.dark .btn-add:hover,
+        body.dark button.btn-add:hover,
+        body.dark .add-btn:hover,
+        body.dark .add-button:hover {
+            background: var(--couleur-principale-hover);
+            color: #ffffff;
+        }
+
+    
+        /* ----- Enregistrer proche du montant du budget ----- */
+        .summary-box .save-button,
+        .summary-box button {
+            justify-self: start;
+            margin-left: 0;
+        }
+
+    
+        /* =========================================================
+           ----- COMPATIBILITÉ TÉLÉPHONE -----
+           ----- Mise en page compacte et sans débordement -----
+        ========================================================== */
+
+        @media (max-width: 600px) {
+
+            body {
+                overflow-x: hidden;
+            }
+
+            .container,
+            main,
+            .summary,
+            .categories {
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+
+            .summary {
+                padding: 10px;
+            }
+
+            .summary-top {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .summary-box {
+                width: 100%;
+                box-sizing: border-box;
+                padding: 12px;
+            }
+
+            /* Budget : montant + bouton restent sur la même ligne */
+            .summary-box:first-child {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .summary-box:first-child .summary-label {
+                width: 100%;
+            }
+
+            .summary-box:first-child .summary-value {
+                flex: 0 0 auto;
+                margin-right: 4px;
+            }
+
+            .summary-box:first-child .save-button,
+            .summary-box:first-child button {
+                margin-left: 0;
+                justify-self: auto;
+                flex: 0 0 auto;
+            }
+
+            .summary-box input {
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+
+            .categories {
+                padding: 8px 12px;
+            }
+
+            /* Les contrôles des catégories passent à la ligne si nécessaire */
+            .category-controls,
+            .actions,
+            .expense-controls {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                width: 100%;
+            }
+
+            input,
+            button,
+            select {
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+
+            button {
+                min-height: 40px;
+            }
+        }
+
+        @media (max-width: 380px) {
+
+            .summary {
+                padding: 8px;
+            }
+
+            .summary-box {
+                padding: 10px;
+            }
+
+            .summary-value {
+                font-size: 1.35rem;
+            }
+
+            .summary-box:first-child {
+                gap: 6px;
+            }
+
+            button,
+            input {
+                font-size: 0.95rem;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================================
+         ----- CONTENEUR PRINCIPAL -----
+    ========================================================== -->
+
+    <div class="container">
+
+
+        <!-- =====================================================
+             ----- HEADER -----
+        ====================================================== -->
+
+        <div class="header">
+
+            <div>
+
+                <h1>
+                    Mon budget de la semaine
+                </h1>
+
+                <p>
+                    Je regarde ce qu'il me reste avant d'acheter.
+                </p>
+
+            </div>
+
+
+            <!-- ----- MODE SOMBRE / CLAIR ----- -->
+
+            <button
+                class="theme-button"
+                id="themeButton"
+                onclick="changerTheme()"
+                aria-label="Changer de thème"
+            >
+
+                🌙
+
+            </button>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             ----- BUDGET GLOBAL -----
+        ====================================================== -->
+
+        <div class="summary">
+
+
+            <div class="summary-top">
+
+
+                <!-- =============================================
+                     ----- BUDGET TOTAL -----
+                ============================================== -->
+
+                <div class="summary-box">
+
+                    <div class="summary-label">
+
+                        Budget total
+
+                    </div>
+
+
+                    <div class="budget-edit">
+
+
+                        <input
+                            type="number"
+                            id="budgetInput"
+                            min="0"
+                            step="0.01"
+                            value="137"
+                            inputmode="decimal"
+                        >
+
+
+                        <span class="budget-edit-euro">
+
+                            €
+
+                        </span>
+
+
+                        <button
+                            class="budget-save"
+                            onclick="modifierBudget()"
+                        >
+
+                            Enregistrer
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =============================================
+                     ----- RESTE DISPONIBLE -----
+                ============================================== -->
+
+                <div class="summary-box">
+
+                    <div class="summary-label">
+
+                        Argent disponible
+
+                    </div>
+
+
+                    <div
+                        class="restant-value"
+                        id="budgetRestant"
+                    >
+
+                        137.00 €
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 ----- TOTAL DÉPENSÉ -----
+            ================================================== -->
+
+            <div
+                class="total-info"
+                id="totalText"
+            >
+
+                0.00 € dépensé sur 137.00 €
+
+            </div>
+
+
+            <!-- ----- BARRE TOTALE ----- -->
+
+            <div class="progress">
+
+                <div
+                    class="progress-bar"
+                    id="totalProgress"
+                ></div>
+
+            </div>
+
+
+            <!-- ----- MESSAGE D'AVERTISSEMENT ----- -->
+
+            <div
+                class="budget-warning"
+                id="budgetWarning"
+            ></div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             ----- CATÉGORIES -----
+        ====================================================== -->
+
+        <div class="categories">
+
+
+            <div class="categories-title">
+
+                Catégories de dépense
+
+            </div>
+
+
+            <!--
+                Les catégories sont générées automatiquement
+                par JavaScript.
+            -->
+
+            <div id="categoriesContainer"></div>
+
+
+
+            <!-- =================================================
+                 ----- AJOUTER UNE CATÉGORIE -----
+            ================================================== -->
+
+            <div class="add-category-container">
+
+
+                <button
+                    class="new-category-button"
+                    onclick="afficherNouvelleCategorie()"
+                >
+
+                    + Ajouter une catégorie
+
+                </button>
+
+
+                <div
+                    class="new-category-row"
+                    id="newCategoryRow"
+                >
+
+
+                    <input
+                        type="text"
+                        id="newCategoryName"
+                        class="edit-input"
+                        placeholder="Nom de la catégorie"
+                    >
+
+
+                    <input
+                        type="number"
+                        id="newCategoryBudget"
+                        class="edit-input"
+                        placeholder="Plafond"
+                        min="0"
+                        step="0.01"
+                        inputmode="decimal"
+                    >
+
+
+                    <button
+                        class="create-category"
+                        onclick="ajouterCategorie()"
+                    >
+
+                        Ajouter
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <script>
+
+
+        /* =========================================================
+           ----- BUDGET INITIAL -----
+
+           ----- À MODIFIER SI BESOIN -----
+
+           Exemple :
+
+           let budgetTotal = 250;
+
+        ========================================================== */
+
+        let budgetTotal = 137;
+
+
+
+        /* =========================================================
+           ----- CATÉGORIES INITIALES -----
+
+           ----- À MODIFIER SI BESOIN -----
+
+           Tu peux ajouter d'autres catégories ici.
+        ========================================================== */
+
+        let categories = [
+
+            {
+                nom: "Courses",
+                plafond: 60,
+                depense: 0,
+                depenses: []
+            },
+
+            {
+                nom: "Loisirs",
+                plafond: 30,
+                depense: 0,
+                depenses: []
+            },
+
+            {
+                nom: "Vêtements",
+                plafond: 20,
+                depense: 0,
+                depenses: []
+            },
+
+            {
+                nom: "Sorties",
+                plafond: 27,
+                depense: 0,
+                depenses: []
+            }
+
+        ];
+
+
+
+        /* =========================================================
+           ----- SAUVEGARDER LES DONNÉES -----
+        ========================================================== */
+
+        function sauvegarder() {
+
+            localStorage.setItem(
+
+                "monBudget",
+
+                JSON.stringify({
+
+                    budgetTotal:
+                        budgetTotal,
+
+                    categories:
+                        categories
+
+                })
+
+            );
+
+        }
+
+
+
+        /* =========================================================
+           ----- CHARGER LES DONNÉES -----
+        ========================================================== */
+
+        function charger() {
+
+            const donnees =
+                localStorage.getItem(
+                    "monBudget"
+                );
+
+
+            if (!donnees) {
+
+                return;
+
+            }
+
+
+            try {
+
+                const data =
+                    JSON.parse(donnees);
+
+
+                if (
+                    typeof data.budgetTotal === "number"
+                ) {
+
+                    budgetTotal =
+                        data.budgetTotal;
+
+                }
+
+
+                if (
+                    Array.isArray(data.categories)
+                ) {
+
+                    categories =
+                        data.categories;
+
+                }
+
+            }
+
+            catch (erreur) {
+
+                console.log(
+                    "Erreur de chargement :",
+                    erreur
+                );
+
+            }
+
+        }
+
+
+
+        /* =========================================================
+           ----- AFFICHER LES CATÉGORIES -----
+        ========================================================== */
+
+        function afficherCategories() {
+
+            const container =
+                document.getElementById(
+                    "categoriesContainer"
+                );
+
+
+            container.innerHTML = "";
+
+
+            categories.forEach(
+
+                (categorie, index) => {
+
+
+                    /* ----- Sécurité ----- */
+
+                    if (
+                        !Array.isArray(
+                            categorie.depenses
+                        )
+                    ) {
+
+                        categorie.depenses = [];
+
+                    }
+
+
+                    if (
+                        typeof categorie.depense !== "number"
+                    ) {
+
+                        categorie.depense = 0;
+
+                    }
+
+
+                    if (
+                        typeof categorie.plafond !== "number"
+                    ) {
+
+                        categorie.plafond = 0;
+
+                    }
+
+
+                    /* =============================================
+                       ----- POURCENTAGE -----
+                    ============================================== */
+
+                    let pourcentage = 0;
+
+
+                    if (
+                        categorie.plafond > 0
+                    ) {
+
+                        pourcentage =
+
+                            (
+                                categorie.depense /
+                                categorie.plafond
+                            ) * 100;
+
+                    }
+
+
+                    pourcentage =
+                        Math.min(
+                            pourcentage,
+                            100
+                        );
+
+
+                    /* =============================================
+                       ----- RESTE CATÉGORIE -----
+                    ============================================== */
+
+                    const reste =
+                        categorie.plafond -
+                        categorie.depense;
+
+
+                    /* =============================================
+                       ----- AVERTISSEMENT -----
+                    ============================================== */
+
+                    let warning = "";
+
+
+                    if (
+                        reste < 0
+                    ) {
+
+                        warning = `
+
+                            <div class="category-warning">
+
+                                ⚠️ Dépassement de
+                                ${Math.abs(reste).toFixed(2)}
+                                €
+
+                            </div>
+
+                        `;
+
+                    }
+
+
+                    /* =============================================
+                       ----- HTML DE LA CATÉGORIE -----
+                    ============================================== */
+
+                    const html = `
+
+                        <div class="category">
+
+
+                            <!-- =================================
+                                 NOM + MONTANT
+                            ================================== -->
+
+                            <div class="category-header">
+
+                                <span class="category-name">
+
+                                    ${echapperHTML(
+                                        categorie.nom
+                                    )}
+
+                                </span>
+
+
+                                <span class="category-amount">
+
+                                    ${categorie.depense.toFixed(2)}
+                                    €
+                                    /
+                                    ${categorie.plafond.toFixed(2)}
+                                    €
+
+                                </span>
+
+                            </div>
+
+
+                            <!-- =================================
+                                 BARRE
+                            ================================== -->
+
+                            <div class="progress category-progress">
+
+                                <div
+                                    class="progress-bar"
+                                    style="width: ${pourcentage}%"
+                                ></div>
+
+                            </div>
+
+
+                            ${warning}
+
+
+                            <!-- =================================
+                                 ACTIONS
+                            ================================== -->
+
+                            <div class="category-actions">
+
+
+                                <span class="category-rest">
+
+                                    Reste :
+                                    ${reste.toFixed(2)}
+                                    €
+
+                                </span>
+
+
+                                <input
+                                    type="number"
+                                    class="amount-input"
+                                    id="amount-${index}"
+                                    placeholder="Montant"
+                                    min="0"
+                                    step="0.01"
+                                    inputmode="decimal"
+                                >
+
+
+                                <button
+                                    class="add-button"
+                                    onclick="ajouterDepense(${index})"
+                                >
+
+                                    Ajouter
+
+                                </button>
+</div>
+
+
+                            <!-- =================================
+                                 MODIFICATION
+                            ================================== -->
+
+                            <button
+                                class="edit-toggle"
+                                onclick="ouvrirEdition(${index})"
+                                id="edit-toggle-${index}"
+                            >
+
+                                ▸ Modifier le plafond total
+
+                            </button>
+
+
+                            <!-- =================================
+                                 FORMULAIRE MODIFICATION
+                            ================================== -->
+
+                            <div
+                                class="edit-area"
+                                id="edit-area-${index}"
+                            >
+
+                                <div class="edit-row">
+
+
+                                    <input
+                                        type="text"
+                                        class="edit-input edit-name"
+                                        id="edit-name-${index}"
+                                        value="${echapperAttribut(categorie.nom)}"
+                                    >
+
+
+                                    <input
+                                        type="number"
+                                        class="edit-input"
+                                        id="edit-budget-${index}"
+                                        value="${categorie.plafond}"
+                                        min="0"
+                                        step="0.01"
+                                        inputmode="decimal"
+                                    >
+
+
+                                    <button
+                                        class="save-category"
+                                        onclick="enregistrerCategorie(${index})"
+                                    >
+
+                                        Enregistrer
+
+                                    </button>
+
+
+                                    <button
+                                        class="delete-category"
+                                        onclick="supprimerCategorie(${index})"
+                                    >
+
+                                        Supprimer
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- =================================
+                                 DÉPENSES
+                            ================================== -->
+
+                            <div class="expenses">
+
+                                ${afficherDepenses(
+                                    categorie,
+                                    index
+                                )}
+
+                            </div>
+
+
+                        </div>
+
+                    `;
+
+
+                    container.innerHTML +=
+                        html;
+
+                }
+
+            );
+
+        }
+
+
+
+        /* =========================================================
+           ----- PROTECTION HTML -----
+        ========================================================== */
+
+        function echapperHTML(texte) {
+
+            return String(texte)
+
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
+        }
+
+
+
+        /* =========================================================
+           ----- PROTECTION DES ATTRIBUTS -----
+        ========================================================== */
+
+        function echapperAttribut(texte) {
+
+            return echapperHTML(
+                texte
+            );
+
+        }
+
+
+
+        /* =========================================================
+           ----- AFFICHER LES DÉPENSES -----
+        ========================================================== */
+
+        function afficherDepenses(
+            categorie,
+            index
+        ) {
+
+            if (
+                !categorie.depenses ||
+                categorie.depenses.length === 0
+            ) {
+
+                return "";
+
+            }
+
+
+            return categorie.depenses
+
+                .map(
+
+                    (depense, depenseIndex) => `
+
+                        <div class="expense">
+
+
+                            <span>
+
+                                Dépense
+                                ${depenseIndex + 1}
+
+                                —
+                                ${depense.toFixed(2)}
+                                €
+
+                            </span>
+
+
+                            <button
+                                class="expense-delete"
+                                onclick="supprimerDepense(
+                                    ${index},
+                                    ${depenseIndex}
+                                )"
+                                aria-label="Supprimer la dépense"
+                            >
+
+                                ×
+
+                            </button>
+
+                        </div>
+
+                    `
+
+                )
+
+                .join("");
+
+        }
+
+
+
+        /* =========================================================
+           ----- AJOUTER UNE DÉPENSE -----
+        ========================================================== */
+
+        function ajouterDepense(index) {
+
+            const input =
+                document.getElementById(
+                    `amount-${index}`
+                );
+
+
+            const montant =
+                parseFloat(
+                    input.value
+                );
+
+
+            if (
+                isNaN(montant) ||
+                montant <= 0
+            ) {
+
+                alert(
+                    "Entre un montant supérieur à 0 €."
+                );
+
+                return;
+
+            }
+
+
+            categories[index].depense +=
+                montant;
+
+
+            categories[index]
+                .depenses
+                .push(montant);
+
+
+            input.value = "";
+
+
+            sauvegarder();
+
+            actualiser();
+
+        }
+
+
+
+        /* =========================================================
+           ----- RETIRER 5 € -----
+        ========================================================== */
+
+        function retirerCinq(index) {
+
+            const categorie =
+                categories[index];
+
+
+            if (
+                categorie.depense < 5
+            ) {
+
+                alert(
+                    "Il n'y a pas assez de dépenses pour retirer 5 €."
+                );
+
+                return;
+
+            }
+
+
+            categorie.depense -=
+                5;
+
+
+            /*
+                On retire 5 € de la dernière dépense.
+            */
+
+            if (
+                categorie.depenses.length > 0
+            ) {
+
+                const dernierIndex =
+                    categorie.depenses.length - 1;
+
+
+                if (
+                    categorie.depenses[
+                        dernierIndex
+                    ] > 5
+                ) {
+
+                    categorie.depenses[
+                        dernierIndex
+                    ] -= 5;
+
+                }
+
+                else {
+
+                    categorie.depenses.pop();
+
+                }
+
+            }
+
+
+            sauvegarder();
+
+            actualiser();
+
+        }
+
+
+
+        /* =========================================================
+           ----- SUPPRIMER UNE DÉPENSE -----
+        ========================================================== */
+
+        function supprimerDepense(
+            categorieIndex,
+            depenseIndex
+        ) {
+
+            const categorie =
+                categories[
+                    categorieIndex
+                ];
+
+
+            const montant =
+                categorie.depenses[
+                    depenseIndex
+                ];
+
+
+            categorie.depense -=
+                montant;
+
+
+            categorie.depenses.splice(
+                depenseIndex,
+                1
+            );
+
+
+            sauvegarder();
+
+            actualiser();
+
+        }
+
+
+
+        /* =========================================================
+           ----- OUVRIR / FERMER MODIFICATION -----
+        ========================================================== */
+
+        function ouvrirEdition(index) {
+
+            const zone =
+                document.getElementById(
+                    `edit-area-${index}`
+                );
+
+
+            const bouton =
+                document.getElementById(
+                    `edit-toggle-${index}`
+                );
+
+
+            const estOuvert =
+                zone.classList.contains(
+                    "open"
+                );
+
+
+            if (estOuvert) {
+
+                zone.classList.remove(
+                    "open"
+                );
+
+
+                bouton.textContent =
+                    "▸ Modifier le plafond total";
+
+            }
+
+            else {
+
+                zone.classList.add(
+                    "open"
+                );
+
+
+                bouton.textContent =
+                    "▼ Modifier le plafond total";
+
+            }
+
+        }
+
+
+
+        /* =========================================================
+           ----- ENREGISTRER CATÉGORIE -----
+        ========================================================== */
+
+        function enregistrerCategorie(index) {
+
+            const nomInput =
+                document.getElementById(
+                    `edit-name-${index}`
+                );
+
+
+            const budgetInput =
+                document.getElementById(
+                    `edit-budget-${index}`
+                );
+
+
+            const nouveauNom =
+                nomInput.value.trim();
+
+
+            const nouveauPlafond =
+                parseFloat(
+                    budgetInput.value
+                );
+
+
+            if (
+                nouveauNom === ""
+            ) {
+
+                alert(
+                    "Le nom de la catégorie ne peut pas être vide."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                isNaN(nouveauPlafond) ||
+                nouveauPlafond < 0
+            ) {
+
+                alert(
+                    "Le plafond doit être supérieur ou égal à 0 €."
+                );
+
+                return;
+
+            }
+
+
+            categories[index].nom =
+                nouveauNom;
+
+
+            categories[index].plafond =
+                nouveauPlafond;
+
+
+            sauvegarder();
+
+            actualiser();
+
+        }
+
+
+
+        /* =========================================================
+           ----- SUPPRIMER CATÉGORIE -----
+        ========================================================== */
+
+        function supprimerCategorie(index) {
+
+            const categorie =
+                categories[index];
+
+
+            const confirmation =
+                confirm(
+
+                    `Supprimer la catégorie "${categorie.nom}" ?`
+
+                );
+
+
+            if (!confirmation) {
+
+                return;
+
+            }
+
+
+            categories.splice(
+                index,
+                1
+            );
+
+
+            sauvegarder();
+
+            actualiser();
+
+        }
+
+
+
+        /* =========================================================
+           ----- MODIFIER LE BUDGET TOTAL -----
+
+           ----- DE 0 € À N'IMPORTE QUEL MONTANT -----
+        ========================================================== */
+
+        function modifierBudget() {
+
+            const input =
+                document.getElementById(
+                    "budgetInput"
+                );
+
+
+            const nouveauBudget =
+                parseFloat(
+                    input.value
+                );
+
+
+            if (
+                isNaN(nouveauBudget) ||
+                nouveauBudget < 0
+            ) {
+
+                alert(
+                    "Le budget doit être supérieur ou égal à 0 €."
+                );
+
+
+                input.value =
+                    budgetTotal;
+
+
+                return;
+
+            }
+
+
+            budgetTotal =
+                nouveauBudget;
+
+
+            sauvegarder();
+
+            actualiser();
+
+        }
+
+
+
+        /* =========================================================
+           ----- AFFICHER FORMULAIRE NOUVELLE CATÉGORIE -----
+        ========================================================== */
+
+        function afficherNouvelleCategorie() {
+
+            const ligne =
+                document.getElementById(
+                    "newCategoryRow"
+                );
+
+
+            ligne.classList.toggle(
+                "open"
+            );
+
+
+            if (
+                ligne.classList.contains(
+                    "open"
+                )
+            ) {
+
+                document.getElementById(
+                    "newCategoryName"
+                ).focus();
+
+            }
+
+        }
+
+
+
+        /* =========================================================
+           ----- AJOUTER UNE CATÉGORIE -----
+        ========================================================== */
+
+        function ajouterCategorie() {
+
+            const nomInput =
+                document.getElementById(
+                    "newCategoryName"
+                );
+
+
+            const budgetInput =
+                document.getElementById(
+                    "newCategoryBudget"
+                );
+
+
+            const nom =
+                nomInput.value.trim();
+
+
+            const plafond =
+                parseFloat(
+                    budgetInput.value
+                );
+
+
+            if (
+                nom === ""
+            ) {
+
+                alert(
+                    "Entre un nom de catégorie."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                isNaN(plafond) ||
+                plafond < 0
+            ) {
+
+                alert(
+                    "Entre un plafond supérieur ou égal à 0 €."
+                );
+
+                return;
+
+            }
+
+
+            categories.push({
+
+                nom:
+                    nom,
+
+                plafond:
+                    plafond,
+
+                depense:
+                    0,
+
+                depenses:
+                    []
+
+            });
+
+
+            nomInput.value =
+                "";
+
+            budgetInput.value =
+                "";
+
+
+            document.getElementById(
+                "newCategoryRow"
+            ).classList.remove(
+                "open"
+            );
+
+
+            sauvegarder();
+
+            actualiser();
+
+        }
+
+
+
+        /* =========================================================
+           ----- CALCUL TOTAL DÉPENSÉ -----
+        ========================================================== */
+
+        function calculerTotalDepense() {
+
+            let total =
+                0;
+
+
+            categories.forEach(
+
+                categorie => {
+
+                    total +=
+                        Number(
+                            categorie.depense
+                        ) || 0;
+
+                }
+
+            );
+
+
+            return total;
+
+        }
+
+
+
+        /* =========================================================
+           ----- CALCUL TOTAL PLAFONDS -----
+        ========================================================== */
+
+        function calculerTotalPlafonds() {
+
+            let total =
+                0;
+
+
+            categories.forEach(
+
+                categorie => {
+
+                    total +=
+                        Number(
+                            categorie.plafond
+                        ) || 0;
+
+                }
+
+            );
+
+
+            return total;
+
+        }
+
+
+
+        /* =========================================================
+           ----- ACTUALISER L'INTERFACE -----
+        ========================================================== */
+
+        function actualiser() {
+
+            afficherCategories();
+
+
+            const totalDepense =
+                calculerTotalDepense();
+
+
+            const totalPlafonds =
+                calculerTotalPlafonds();
+
+
+            const restant =
+                budgetTotal -
+                totalDepense;
+
+
+            /* ----- Budget ----- */
+
+            document.getElementById(
+                "budgetInput"
+            ).value =
+                budgetTotal;
+
+
+            /* ----- Reste ----- */
+
+            const restantElement =
+                document.getElementById(
+                    "budgetRestant"
+                );
+
+
+            restantElement.textContent =
+
+                restant.toFixed(2)
+                +
+                " €";
+
+
+            if (
+                restant < 0
+            ) {
+
+                restantElement.classList.add(
+                    "depasse"
+                );
+
+            }
+
+            else {
+
+                restantElement.classList.remove(
+                    "depasse"
+                );
+
+            }
+
+
+            /* ----- Texte total ----- */
+
+            document.getElementById(
+                "totalText"
+            ).textContent =
+
+                totalDepense.toFixed(2)
+                +
+                " € dépensé sur "
+                +
+                budgetTotal.toFixed(2)
+                +
+                " €";
+
+
+            /* ----- Pourcentage ----- */
+
+            let pourcentage =
+                0;
+
+
+            if (
+                budgetTotal > 0
+            ) {
+
+                pourcentage =
+
+                    (
+                        totalDepense /
+                        budgetTotal
+                    ) * 100;
+
+            }
+
+
+            pourcentage =
+                Math.min(
+                    pourcentage,
+                    100
+                );
+
+
+            document.getElementById(
+                "totalProgress"
+            ).style.width =
+
+                pourcentage
+                +
+                "%";
+
+
+            /* ----- Avertissement plafonds ----- */
+
+            const warning =
+                document.getElementById(
+                    "budgetWarning"
+                );
+
+
+            if (
+                totalPlafonds >
+                budgetTotal
+            ) {
+
+                warning.textContent =
+
+                    "⚠️ Les plafonds représentent "
+                    +
+                    totalPlafonds.toFixed(2)
+                    +
+                    " € pour un budget de "
+                    +
+                    budgetTotal.toFixed(2)
+                    +
+                    " €.";
+
+            }
+
+            else {
+
+                warning.textContent =
+                    "";
+
+            }
+
+        }
+
+
+
+        /* =========================================================
+           ----- MODE SOMBRE / CLAIR -----
+        ========================================================== */
+
+        function changerTheme() {
+
+            document.body.classList.toggle(
+                "dark"
+            );
+
+
+            const sombre =
+                document.body.classList.contains(
+                    "dark"
+                );
+
+
+            localStorage.setItem(
+                "modeSombre",
+                sombre
+            );
+
+
+            document.getElementById(
+                "themeButton"
+            ).textContent =
+
+                sombre
+                    ? "☀️"
+                    : "🌙";
+
+        }
+
+
+
+        /* =========================================================
+           ----- CHARGER LE THÈME -----
+        ========================================================== */
+
+        function chargerTheme() {
+
+            const sombre =
+                localStorage.getItem(
+                    "modeSombre"
+                );
+
+
+            if (
+                sombre === "true"
+            ) {
+
+                document.body.classList.add(
+                    "dark"
+                );
+
+
+                document.getElementById(
+                    "themeButton"
+                ).textContent =
+                    "☀️";
+
+            }
+
+        }
+
+
+
+        /* =========================================================
+           ----- PERMETTRE ENTRÉE AU CLAVIER -----
+        ========================================================== */
+
+        document.addEventListener(
+            "keydown",
+            function(event) {
+
+                /*
+                   Entrée dans le champ du budget
+                   = enregistrer
+                */
+
+                if (
+                    event.key === "Enter" &&
+                    document.activeElement.id ===
+                    "budgetInput"
+                ) {
+
+                    modifierBudget();
+
+                }
+
+
+                /*
+                   Entrée dans le formulaire
+                   nouvelle catégorie
+                */
+
+                if (
+                    event.key === "Enter" &&
+                    document.activeElement.id ===
+                    "newCategoryBudget"
+                ) {
+
+                    ajouterCategorie();
+
+                }
+
+            }
+        );
+
+
+
+        /* =========================================================
+           ----- DÉMARRAGE DE L'APPLICATION -----
+        ========================================================== */
+
+        charger();
+
+        chargerTheme();
+
+        actualiser();
+
+
+    </script>
+
+
+</body>
+
+</html>
